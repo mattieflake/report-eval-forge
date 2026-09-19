@@ -145,11 +145,13 @@ export function ResultsViewer({ result }: { result: EvaluationResult }) {
       <Tabs value={tab} onValueChange={setTab} className="flex min-h-0 flex-1 flex-col">
         <div className="border-b px-6">
           <TabsList className="h-11 w-full justify-start gap-1 rounded-none bg-transparent p-0 sm:w-auto">
-            {[
-              ["summary", "Executive Summary"],
-              ["metrics", "Metrics Breakdown"],
-              ["export", "Export"],
-            ].map(([v, label]) => (
+            {(
+              [
+                ["summary", "Executive Summary"],
+                ["metrics", "Metrics Breakdown"],
+                ["export", "Export"],
+              ] as const
+            ).map(([v, label]) => (
               <TabsTrigger
                 key={v}
                 value={v}
