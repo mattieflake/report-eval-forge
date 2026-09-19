@@ -81,8 +81,10 @@ export function runMockEvaluation(input: EvaluationInput): EvaluationResult {
   const seed = hash(input.title + input.platform + input.labData + input.code);
 
   const lines = input.code.split("\n").length;
-  const functions = (input.code.match(/\b(function|def|fn|=>|void|public|private)\b/g) ?? [])
-    .length;
+  const functions = Math.max(
+    (input.code.match(/\b(function|def|fn|func|sub|procedure)\b|=>/g) ?? []).length,
+    (input.code.match(/\b[A-Za-z_]\w*\s*\([^;{}]*\)\s*(->\s*\w+\s*)?\{/g) ?? []).length,
+  );
   const observations = input.labData.split(/\n+/).filter((l) => l.trim()).length;
   const numericSamples = (input.labData.match(/-?\d+(\.\d+)?/g) ?? []).length;
 
