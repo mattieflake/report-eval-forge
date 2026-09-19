@@ -52,8 +52,8 @@ export function ParameterForm({ onSubmit, onReset, isRunning }: Props) {
 
   const values = form.watch();
 
-  const handleInvalid = () => {
-    const count = Object.keys(form.formState.errors).length;
+  const handleInvalid = (errors: Record<string, unknown>) => {
+    const count = Object.keys(errors).length;
     toast.error("Validation failed", {
       description: `${count} field${count === 1 ? "" : "s"} need attention before running.`,
     });
