@@ -47,7 +47,8 @@ export function ParameterForm({ onSubmit, onReset, isRunning }: Props) {
   const form = useForm<EvaluationInput>({
     resolver: zodResolver(evaluationInputSchema),
     defaultValues: EMPTY,
-    mode: "onTouched",
+    mode: "onChange",
+    reValidateMode: "onChange",
   });
 
   const values = form.watch();
@@ -146,7 +147,12 @@ export function ParameterForm({ onSubmit, onReset, isRunning }: Props) {
         />
 
         <div className="mt-auto flex flex-wrap items-center gap-2 pt-2">
-          <Button type="submit" variant="run" disabled={isRunning} className="flex-1 sm:flex-none">
+          <Button
+            type="submit"
+            variant="run"
+            disabled={isRunning || !form.formState.isValid}
+            className="flex-1 sm:flex-none"
+          >
             <Play />
             {isRunning ? "Evaluating…" : "Run Evaluation"}
           </Button>
@@ -160,7 +166,7 @@ export function ParameterForm({ onSubmit, onReset, isRunning }: Props) {
             }}
           >
             <Sparkles />
-            Load sample
+            Load sample data
           </Button>
           <Button
             type="button"
