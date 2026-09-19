@@ -16,6 +16,7 @@ const buttonVariants = cva(
         secondary: "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
+        run: "bg-success text-success-foreground font-semibold shadow-[0_0_0_1px_color-mix(in_oklab,var(--success)_40%,transparent),0_8px_24px_-12px_var(--success)] hover:bg-success/90",
       },
       size: {
         default: "h-9 px-4 py-2",
