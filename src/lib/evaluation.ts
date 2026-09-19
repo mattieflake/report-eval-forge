@@ -216,6 +216,11 @@ export function runMockEvaluation(input: EvaluationInput): EvaluationResult {
       : verdict === "Conditional"
         ? `Address flagged items and re-run the evaluation before sign-off.`
         : `Rework required. Resolve failing criteria and re-collect lab data under controlled conditions.`,
+    ``,
+    `## Evaluated Source`,
+    `\`\`\`${input.platform.toLowerCase().includes("python") ? "python" : "c"}`,
+    input.code,
+    `\`\`\``,
   ].join("\n");
 
   return {
