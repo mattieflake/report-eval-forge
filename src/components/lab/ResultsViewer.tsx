@@ -5,6 +5,7 @@ import {
   AlertTriangle,
   XCircle,
   Copy,
+  Check,
   FileJson,
   FileText,
 } from "lucide-react";
@@ -77,6 +78,7 @@ function download(filename: string, content: string, type: string) {
 
 export function ResultsViewer({ result }: { result: EvaluationResult }) {
   const [tab, setTab] = useState("summary");
+  const [copied, setCopied] = useState(false);
   const counts = result.metrics.reduce(
     (acc, m) => ({ ...acc, [m.status]: acc[m.status] + 1 }),
     { pass: 0, warn: 0, fail: 0 } as Record<MetricStatus, number>,
@@ -88,6 +90,8 @@ export function ResultsViewer({ result }: { result: EvaluationResult }) {
   const copyMarkdown = async () => {
     try {
       await navigator.clipboard.writeText(result.markdown);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1800);
       toast.success("Markdown copied", { description: `${result.markdown.length} characters.` });
     } catch {
       toast.error("Copy failed", { description: "Clipboard access was blocked by the browser." });
@@ -116,27 +120,39 @@ export function ResultsViewer({ result }: { result: EvaluationResult }) {
             </span>
           </div>
         </div>
-        <div
-          className={cn(
-            "shrink-0 rounded-lg border px-3 py-2 text-right",
-            verdictTone === "success" && "border-success/30 bg-success/10",
-            verdictTone === "warn" && "border-warning/30 bg-warning/10",
-            verdictTone === "fail" && "border-danger/30 bg-danger/10",
-          )}
-        >
-          <div className="font-mono text-2xl font-semibold leading-none tabular-nums">
-            {result.score}
-            <span className="text-xs text-muted-foreground">/100</span>
-          </div>
+        <div className="flex shrink-0 items-start gap-2">
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={copyMarkdown}
+            aria-label={copied ? "Markdown copied" : "Copy Markdown"}
+            className={cn("min-w-35 transition-colors", copied && "border-success/40 text-success")}
+          >
+            {copied ? <Check className="text-success" /> : <Copy />}
+            {copied ? "Copied" : "Copy Markdown"}
+          </Button>
           <div
             className={cn(
-              "mt-1 text-[11px] font-medium uppercase tracking-wider",
-              verdictTone === "success" && "text-success",
-              verdictTone === "warn" && "text-warning",
-              verdictTone === "fail" && "text-danger",
+              "rounded-lg border px-3 py-2 text-right",
+              verdictTone === "success" && "border-success/30 bg-success/10",
+              verdictTone === "warn" && "border-warning/30 bg-warning/10",
+              verdictTone === "fail" && "border-danger/30 bg-danger/10",
             )}
           >
-            {result.verdict} · {result.grade}
+            <div className="font-mono text-2xl font-semibold leading-none tabular-nums">
+              {result.score}
+              <span className="text-xs text-muted-foreground">/100</span>
+            </div>
+            <div
+              className={cn(
+                "mt-1 text-[11px] font-medium uppercase tracking-wider",
+                verdictTone === "success" && "text-success",
+                verdictTone === "warn" && "text-warning",
+                verdictTone === "fail" && "text-danger",
+              )}
+            >
+              {result.verdict} · {result.grade}
+            </div>
           </div>
         </div>
       </header>
@@ -225,30 +241,37 @@ export function ResultsViewer({ result }: { result: EvaluationResult }) {
 
         <TabsContent value="export" className="mt-0 flex-1 overflow-auto p-6">
           <div className="grid gap-3 sm:grid-cols-3">
-            <button
+            <Button
+              variant="outline"
               onClick={copyMarkdown}
-              className="group rounded-lg border bg-surface p-4 text-left transition-colors hover:border-success/40 hover:bg-success/5"
+              className="h-auto min-h-31 items-start justify-start whitespace-normal bg-surface p-4 text-left hover:border-success/40 hover:bg-success/5"
             >
-              <Copy className="mb-3 size-5 text-success" />
-              <div className="font-medium">Copy Markdown</div>
-              <div className="mt-1 text-xs text-muted-foreground">
-                Raw report to clipboard for wikis or PR descriptions.
+              <div>
+                {copied ? <Check className="mb-3 size-5 text-success" /> : <Copy className="mb-3 size-5 text-success" />}
+                <div className="font-medium">{copied ? "Copied" : "Copy Markdown"}</div>
+                <div className="mt-1 text-xs font-normal text-muted-foreground">
+                  Raw report to clipboard for wikis or PR descriptions.
+                </div>
               </div>
-            </button>
-            <button
+            </Button>
+            <Button
+              variant="outline"
               onClick={() => {
                 download(`${base}-report.md`, result.markdown, "text/markdown");
                 toast.success("Report exported", { description: `${base}-report.md` });
               }}
-              className="group rounded-lg border bg-surface p-4 text-left transition-colors hover:border-success/40 hover:bg-success/5"
+              className="h-auto min-h-31 items-start justify-start whitespace-normal bg-surface p-4 text-left hover:border-success/40 hover:bg-success/5"
             >
-              <FileText className="mb-3 size-5 text-success" />
-              <div className="font-medium">Download .md</div>
-              <div className="mt-1 text-xs text-muted-foreground">
-                Save the executive summary as a Markdown file.
+              <div>
+                <FileText className="mb-3 size-5 text-success" />
+                <div className="font-medium">Download .md</div>
+                <div className="mt-1 text-xs font-normal text-muted-foreground">
+                  Save the executive summary as a Markdown file.
+                </div>
               </div>
-            </button>
-            <button
+            </Button>
+            <Button
+              variant="outline"
               onClick={() => {
                 download(
                   `${base}-evaluation.json`,
@@ -257,14 +280,16 @@ export function ResultsViewer({ result }: { result: EvaluationResult }) {
                 );
                 toast.success("JSON exported", { description: `${base}-evaluation.json` });
               }}
-              className="group rounded-lg border bg-surface p-4 text-left transition-colors hover:border-success/40 hover:bg-success/5"
+              className="h-auto min-h-31 items-start justify-start whitespace-normal bg-surface p-4 text-left hover:border-success/40 hover:bg-success/5"
             >
-              <FileJson className="mb-3 size-5 text-success" />
-              <div className="font-medium">Download .json</div>
-              <div className="mt-1 text-xs text-muted-foreground">
-                Structured metrics payload for pipelines.
+              <div>
+                <FileJson className="mb-3 size-5 text-success" />
+                <div className="font-medium">Download .json</div>
+                <div className="mt-1 text-xs font-normal text-muted-foreground">
+                  Structured metrics payload for pipelines.
+                </div>
               </div>
-            </button>
+            </Button>
           </div>
 
           <div className="mt-6">
@@ -273,7 +298,8 @@ export function ResultsViewer({ result }: { result: EvaluationResult }) {
                 Raw Markdown preview
               </span>
               <Button size="sm" variant="outline" onClick={copyMarkdown}>
-                <Copy /> Copy
+                {copied ? <Check className="text-success" /> : <Copy />}
+                {copied ? "Copied" : "Copy"}
               </Button>
             </div>
             <pre className="max-h-80 overflow-auto rounded-lg border bg-background p-4 font-mono text-xs leading-relaxed text-muted-foreground">
