@@ -79,10 +79,11 @@ function download(filename: string, content: string, type: string) {
 export function ResultsViewer({ result }: { result: EvaluationResult }) {
   const [tab, setTab] = useState("summary");
   const [copied, setCopied] = useState(false);
-  const counts = result.metrics.reduce(
-    (acc, m) => ({ ...acc, [m.status]: acc[m.status] + 1 }),
-    { pass: 0, warn: 0, fail: 0 } as Record<MetricStatus, number>,
-  );
+  const counts = result.metrics.reduce((acc, m) => ({ ...acc, [m.status]: acc[m.status] + 1 }), {
+    pass: 0,
+    warn: 0,
+    fail: 0,
+  } as Record<MetricStatus, number>);
   const verdictTone =
     result.verdict === "Approved" ? "success" : result.verdict === "Conditional" ? "warn" : "fail";
   const base = slug(result.input.title) || "evaluation";
@@ -247,7 +248,11 @@ export function ResultsViewer({ result }: { result: EvaluationResult }) {
               className="h-auto min-h-31 items-start justify-start whitespace-normal bg-surface p-4 text-left hover:border-success/40 hover:bg-success/5"
             >
               <div>
-                {copied ? <Check className="mb-3 size-5 text-success" /> : <Copy className="mb-3 size-5 text-success" />}
+                {copied ? (
+                  <Check className="mb-3 size-5 text-success" />
+                ) : (
+                  <Copy className="mb-3 size-5 text-success" />
+                )}
                 <div className="font-medium">{copied ? "Copied" : "Copy Markdown"}</div>
                 <div className="mt-1 text-xs font-normal text-muted-foreground">
                   Raw report to clipboard for wikis or PR descriptions.
@@ -311,4 +316,3 @@ export function ResultsViewer({ result }: { result: EvaluationResult }) {
     </div>
   );
 }
-
