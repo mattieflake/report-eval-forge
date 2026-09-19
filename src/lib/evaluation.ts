@@ -1,10 +1,10 @@
 import { z } from "zod";
 
 export const LIMITS = {
-  title: { min: 3, max: 120 },
-  platform: { min: 2, max: 80 },
+  title: { min: 20, max: 120 },
+  platform: { min: 20, max: 80 },
   labData: { min: 20, max: 8000 },
-  code: { min: 10, max: 12000 },
+  code: { min: 20, max: 12000 },
 } as const;
 
 export const evaluationInputSchema = z.object({
@@ -16,7 +16,7 @@ export const evaluationInputSchema = z.object({
   platform: z
     .string()
     .trim()
-    .min(LIMITS.platform.min, "Target platform is required")
+    .min(LIMITS.platform.min, `Target platform needs at least ${LIMITS.platform.min} characters`)
     .max(LIMITS.platform.max, `Platform must be under ${LIMITS.platform.max} characters`),
   labData: z
     .string()
