@@ -5,7 +5,6 @@ import {
   AlertTriangle,
   XCircle,
   Copy,
-  Download,
   FileJson,
   FileText,
 } from "lucide-react";
@@ -287,4 +286,3 @@ export function ResultsViewer({ result }: { result: EvaluationResult }) {
   );
 }
 
-export { Download };
